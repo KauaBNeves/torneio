@@ -1,36 +1,25 @@
-name: Build Android APK
+name: Build APK
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v4
-        with:
-          path: ~/.buildozer
-          key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
-          restore-keys: |
-            ${{ runner.os }}-buildozer-
-
-      - name: Build APK with Buildozer Action
-        uses: kivy/buildozer-action@v1
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
         with:
           command: buildozer android debug
-          buildozer_version: master
+          buildozer_version: stable
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          path: bin/*.apk
+          name: mma-chaveamento-apk
+          path: ${{ steps.buildozer.outputs.filename }}
