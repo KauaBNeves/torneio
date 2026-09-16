@@ -1,41 +1,6 @@
-name: Build APK
-
-on:
-  workflow_dispatch:
-  push:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Cache Buildozer global (SDK/NDK/downloads)
-        uses: actions/cache@v4
+- name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
         with:
-          path: ~/.buildozer-global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
-          restore-keys: |
-            buildozer-global-
-
-      - name: Preparar pasta de cache
-        run: mkdir -p ~/.buildozer-global
-
-      - name: Build APK with Buildozer (com retentativas automáticas)
-        uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 45
-          max_attempts: 4
-          retry_wait_seconds: 30
-          command: |
-            docker run --rm \
-              -v "${{ github.workspace }}":/home/user/hostcwd \
-              -v "$HOME/.buildozer-global":/home/user/.buildozer \
-              kivy/buildozer:latest android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: mma-chaveamento-apk
-          path: bin/*.apk
+          command: buildozer android debug
+          buildozer_version: master
