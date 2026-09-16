@@ -15,6 +15,7 @@ orientation = portrait
 fullscreen = 0
 
 android.permissions = WAKE_LOCK
+android.accept_sdk_license = True
 
 android.archs = arm64-v8a,armeabi-v7a
 android.api = 34
